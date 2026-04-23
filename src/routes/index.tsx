@@ -1,26 +1,188 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
+import { StageFrame } from "@/components/StageFrame";
+import { AuraTile } from "@/components/AuraTile";
+import { SpotlightModal } from "@/components/SpotlightModal";
+import { AttractScreen } from "@/components/AttractScreen";
+import { ResetDialog } from "@/components/ResetDialog";
+import { MR_HASHTAGS, MS_HASHTAGS, shuffle } from "@/lib/hashtags";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Olympus Reveal · Mr. & Ms. CCS 2026" },
+      {
+        name: "description",
+        content:
+          "The official hashtag reveal system for Mr. & Ms. CCS 2026 — Digital Royalty Edition.",
+      },
+      { property: "og:title", content: "Olympus Reveal · Mr. & Ms. CCS 2026" },
+      {
+        property: "og:description",
+        content: "Live hashtag reveal stage for Mr. & Ms. CCS 2026.",
+      },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. For sites with multiple pages (About, Services, Contact, etc.),
-// create separate route files (about.tsx, services.tsx, contact.tsx) — don't put all pages in this file.
-function PlaceholderIndex() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}
+type Category = "MR" | "MS";
 
 function Index() {
-  return <PlaceholderIndex />;
+  const [showAttract, setShowAttract] = useState(true);
+  const [category, setCategory] = useState<Category>("MR");
+  const [hashtags, setHashtags] = useState<string[]>(() => shuffle(MR_HASHTAGS));
+  const [flipped, setFlipped] = useState<Set<number>>(new Set());
+  const [spotlight, setSpotlight] = useState<number | null>(null);
+  const [showReset, setShowReset] = useState(false);
+
+  // Operator shortcuts: F11 fullscreen, R for reset
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "F11") {
+        e.preventDefault();
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen?.().catch(() => {});
+        } else {
+          document.exitFullscreen?.().catch(() => {});
+        }
+      }
+      // Hidden reset shortcut: Ctrl+Shift+R
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "r") {
+        e.preventDefault();
+        setShowReset(true);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const handleFlip = (idx: number) => {
+    if (flipped.has(idx) || spotlight !== null) return;
+    const next = new Set(flipped);
+    next.add(idx);
+    setFlipped(next);
+    setSpotlight(idx);
+  };
+
+  const handleReset = (cat: Category) => {
+    setCategory(cat);
+    setHashtags(shuffle(cat === "MR" ? MR_HASHTAGS : MS_HASHTAGS));
+    setFlipped(new Set());
+    setSpotlight(null);
+    setShowReset(false);
+  };
+
+  const tiles = useMemo(
+    () =>
+      Array.from({ length: 20 }).map((_, i) => ({
+        idx: i,
+        number: i + 1,
+        hashtag: hashtags[i],
+      })),
+    [hashtags]
+  );
+
+  return (
+    <StageFrame>
+      {/* Header */}
+      <header
+        className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between"
+        style={{ padding: "1.25rem 2rem" }}
+      >
+        <div className="font-display silver-text" style={{ fontSize: "0.7rem", letterSpacing: "0.5em" }}>
+          OLYMPUS · REVEAL
+        </div>
+        <div
+          className="font-display silver-emboss text-center"
+          style={{ fontSize: "clamp(1rem, 1.6vw, 1.5rem)", fontWeight: 700, letterSpacing: "0.25em" }}
+        >
+          MR. & MS. CCS · {category === "MR" ? "GENTLEMEN" : "LADIES"}
+        </div>
+        <div
+          className="font-sans"
+          style={{ fontSize: "0.65rem", letterSpacing: "0.3em", color: "oklch(0.82 0.01 250 / 0.6)" }}
+        >
+          {flipped.size}/20 REVEALED
+        </div>
+      </header>
+
+      {/* Grid 5x4 */}
+      <main
+        className="absolute inset-0 flex items-center justify-center"
+        style={{ padding: "5rem 3rem 3rem" }}
+      >
+        <div
+          className="grid w-full h-full"
+          style={{
+            gridTemplateColumns: "repeat(5, 1fr)",
+            gridTemplateRows: "repeat(4, 1fr)",
+            gap: "clamp(0.5rem, 1vw, 1rem)",
+            maxWidth: "1500px",
+          }}
+        >
+          {tiles.map((t) => (
+            <AuraTile
+              key={`${category}-${t.idx}`}
+              number={t.number}
+              hashtag={t.hashtag}
+              flipped={flipped.has(t.idx)}
+              delay={t.idx * 60}
+              onClick={() => handleFlip(t.idx)}
+            />
+          ))}
+        </div>
+      </main>
+
+      {/* Footer hint */}
+      <footer
+        className="absolute bottom-0 left-0 right-0 z-10 flex items-center justify-between"
+        style={{ padding: "0.75rem 2rem" }}
+      >
+        <span
+          className="font-sans"
+          style={{ fontSize: "0.6rem", letterSpacing: "0.3em", color: "oklch(0.82 0.01 250 / 0.45)" }}
+        >
+          F11 · FULLSCREEN
+        </span>
+        <span
+          className="font-sans"
+          style={{ fontSize: "0.6rem", letterSpacing: "0.3em", color: "oklch(0.82 0.01 250 / 0.45)" }}
+        >
+          ESC / SPACE · CLOSE SPOTLIGHT
+        </span>
+        <button
+          onClick={() => setShowReset(true)}
+          className="font-sans"
+          style={{
+            fontSize: "0.6rem",
+            letterSpacing: "0.3em",
+            color: "oklch(0.82 0.01 250 / 0.45)",
+            padding: "0.25rem 0.5rem",
+          }}
+        >
+          ⌃⇧R · RESET
+        </button>
+      </footer>
+
+      {/* Spotlight */}
+      {spotlight !== null && (
+        <SpotlightModal
+          number={spotlight + 1}
+          hashtag={hashtags[spotlight]}
+          onClose={() => setSpotlight(null)}
+        />
+      )}
+
+      {/* Reset dialog */}
+      <ResetDialog
+        open={showReset}
+        onClose={() => setShowReset(false)}
+        onConfirm={handleReset}
+      />
+
+      {/* Attract intro overlay */}
+      {showAttract && <AttractScreen onStart={() => setShowAttract(false)} />}
+    </StageFrame>
+  );
 }
