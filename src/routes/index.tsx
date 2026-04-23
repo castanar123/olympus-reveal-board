@@ -100,7 +100,7 @@ function Index() {
         </div>
         <div
           className="font-display silver-emboss text-center"
-          style={{ fontSize: "clamp(1rem, 1.6vw, 1.5rem)", fontWeight: 700, letterSpacing: "0.25em" }}
+          style={{ fontSize: "clamp(1rem, 1.6cqw, 2rem)", fontWeight: 700, letterSpacing: "0.25em" }}
         >
           MR. & MS. CCS · {category === "MR" ? "GENTLEMEN" : "LADIES"}
         </div>
@@ -122,7 +122,7 @@ function Index() {
           style={{
             gridTemplateColumns: "repeat(5, 1fr)",
             gridTemplateRows: "repeat(4, 1fr)",
-            gap: "clamp(0.4rem, 0.8vw, 0.85rem)",
+            gap: "clamp(0.4rem, 0.7cqw, 1rem)",
           }}
         >
           {tiles.map((t) => (
