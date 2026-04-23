@@ -161,7 +161,8 @@
 /* ===== Aura tile ===== */
 .aura-tile {
   position: relative;
-  aspect-ratio: 1 / 1;
+  width: 100%;
+  height: 100%;
   perspective: 1400px;
   cursor: pointer;
 }

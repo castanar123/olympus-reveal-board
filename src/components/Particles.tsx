@@ -1,8 +1,20 @@
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
+
+interface Particle {
+  id: number;
+  left: number;
+  delay: number;
+  duration: number;
+  size: number;
+  opacity: number;
+}
 
 export function Particles({ count = 40 }: { count?: number }) {
-  const particles = useMemo(
-    () =>
+  const [particles, setParticles] = useState<Particle[]>([]);
+
+  // Generate on client only — avoids SSR hydration mismatch from Math.random()
+  useEffect(() => {
+    setParticles(
       Array.from({ length: count }).map((_, i) => ({
         id: i,
         left: Math.random() * 100,
@@ -10,9 +22,9 @@ export function Particles({ count = 40 }: { count?: number }) {
         duration: 10 + Math.random() * 14,
         size: 1 + Math.random() * 3,
         opacity: 0.3 + Math.random() * 0.6,
-      })),
-    [count]
-  );
+      }))
+    );
+  }, [count]);
 
   return (
     <div className="particles" aria-hidden="true">
