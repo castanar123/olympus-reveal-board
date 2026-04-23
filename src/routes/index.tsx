@@ -91,84 +91,104 @@ function Index() {
 
   return (
     <StageFrame>
-      {/* Header */}
-      <header
-        className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between"
-        style={{ padding: "1.25rem 2rem" }}
-      >
-        <div className="font-display silver-text" style={{ fontSize: "0.7rem", letterSpacing: "0.5em" }}>
-          OLYMPUS · REVEAL
-        </div>
-        <div
-          className="font-display silver-emboss text-center"
-          style={{ fontSize: "clamp(1rem, 1.6cqw, 2rem)", fontWeight: 700, letterSpacing: "0.25em" }}
+      {/* Safe-zone wrapper — keeps text & tile borders inside the visible area on
+          LED walls / projectors that have bezel or 5% overscan. */}
+      <div className="stage-safe absolute inset-0">
+        {/* Header */}
+        <header
+          className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between"
+          style={{ padding: "1rem 1.5rem" }}
         >
-          MR. & MS. CCS · {category === "MR" ? "GENTLEMEN" : "LADIES"}
-        </div>
-        <div
-          className="font-sans"
-          style={{ fontSize: "0.65rem", letterSpacing: "0.3em", color: "oklch(0.82 0.01 250 / 0.6)" }}
-        >
-          {flipped.size}/20 REVEALED
-        </div>
-      </header>
+          <div className="font-display silver-text" style={{ fontSize: "0.7rem", letterSpacing: "0.5em" }}>
+            OLYMPUS · REVEAL
+          </div>
+          <div
+            className="font-display silver-emboss text-center"
+            style={{ fontSize: "clamp(1rem, 1.6cqw, 2rem)", fontWeight: 700, letterSpacing: "0.25em" }}
+          >
+            MR. & MS. CCS · {category === "MR" ? "GENTLEMEN" : "LADIES"}
+          </div>
+          <div
+            className="font-sans"
+            style={{ fontSize: "0.65rem", letterSpacing: "0.3em", color: "oklch(0.82 0.01 250 / 0.6)" }}
+          >
+            {flipped.size}/20 REVEALED
+          </div>
+        </header>
 
-      {/* Grid 5x4 — fills available stage space */}
-      <main
-        className="absolute inset-0 flex items-center justify-center"
-        style={{ padding: "3.5rem 2rem 2rem" }}
-      >
-        <div
-          className="grid w-full h-full"
-          style={{
-            gridTemplateColumns: "repeat(5, 1fr)",
-            gridTemplateRows: "repeat(4, 1fr)",
-            gap: "clamp(0.4rem, 0.7cqw, 1rem)",
-          }}
+        {/* Grid 5x4 — fills available stage space */}
+        <main
+          className="absolute inset-0 flex items-center justify-center"
+          style={{ padding: "3.25rem 1rem 2.25rem" }}
         >
-          {tiles.map((t) => (
-            <AuraTile
-              key={`${category}-${t.idx}`}
-              number={t.number}
-              hashtag={t.hashtag}
-              flipped={flipped.has(t.idx)}
-              delay={t.idx * 60}
-              onClick={() => handleFlip(t.idx)}
-            />
-          ))}
-        </div>
-      </main>
+          <div
+            className="grid w-full h-full"
+            style={{
+              gridTemplateColumns: "repeat(5, 1fr)",
+              gridTemplateRows: "repeat(4, 1fr)",
+              gap: "clamp(0.4rem, 0.7cqw, 1rem)",
+            }}
+          >
+            {tiles.map((t) => (
+              <AuraTile
+                key={`${category}-${t.idx}`}
+                number={t.number}
+                hashtag={t.hashtag}
+                flipped={flipped.has(t.idx)}
+                delay={t.idx * 60}
+                onClick={() => handleFlip(t.idx)}
+              />
+            ))}
+          </div>
+        </main>
 
-      {/* Footer hint */}
-      <footer
-        className="absolute bottom-0 left-0 right-0 z-10 flex items-center justify-between"
-        style={{ padding: "0.75rem 2rem" }}
-      >
-        <span
-          className="font-sans"
-          style={{ fontSize: "0.6rem", letterSpacing: "0.3em", color: "oklch(0.82 0.01 250 / 0.45)" }}
+        {/* Footer hint */}
+        <footer
+          className="absolute bottom-0 left-0 right-0 z-10 flex items-center justify-between"
+          style={{ padding: "0.5rem 1.5rem", gap: "1rem" }}
         >
-          F11 · FULLSCREEN
-        </span>
-        <span
-          className="font-sans"
-          style={{ fontSize: "0.6rem", letterSpacing: "0.3em", color: "oklch(0.82 0.01 250 / 0.45)" }}
-        >
-          ESC / SPACE · CLOSE SPOTLIGHT
-        </span>
-        <button
-          onClick={() => setShowReset(true)}
-          className="font-sans"
-          style={{
-            fontSize: "0.6rem",
-            letterSpacing: "0.3em",
-            color: "oklch(0.82 0.01 250 / 0.45)",
-            padding: "0.25rem 0.5rem",
-          }}
-        >
-          ⌃⇧R · RESET
-        </button>
-      </footer>
+          <span
+            className="font-sans"
+            style={{ fontSize: "0.6rem", letterSpacing: "0.3em", color: "oklch(0.82 0.01 250 / 0.45)" }}
+          >
+            F11 · FULLSCREEN
+          </span>
+          <span
+            className="font-sans"
+            style={{ fontSize: "0.6rem", letterSpacing: "0.3em", color: "oklch(0.82 0.01 250 / 0.45)" }}
+          >
+            ESC / SPACE · CLOSE SPOTLIGHT
+          </span>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/admin"
+              className="font-sans"
+              style={{
+                fontSize: "0.6rem",
+                letterSpacing: "0.3em",
+                color: "oklch(0.82 0.01 250 / 0.55)",
+                padding: "0.25rem 0.6rem",
+                border: "1px solid oklch(0.82 0.01 250 / 0.3)",
+                borderRadius: "0.35rem",
+              }}
+            >
+              ADMIN
+            </Link>
+            <button
+              onClick={() => setShowReset(true)}
+              className="font-sans"
+              style={{
+                fontSize: "0.6rem",
+                letterSpacing: "0.3em",
+                color: "oklch(0.82 0.01 250 / 0.45)",
+                padding: "0.25rem 0.5rem",
+              }}
+            >
+              ⌃⇧R · RESET
+            </button>
+          </div>
+        </footer>
+      </div>
 
       {/* Spotlight */}
       {spotlight !== null && (

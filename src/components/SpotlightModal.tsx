@@ -23,10 +23,11 @@ export function SpotlightModal({ number, hashtag, onClose }: SpotlightModalProps
       className="absolute inset-0 z-30 flex items-center justify-center"
       onClick={onClose}
       style={{
+        // Transparent vignette — keeps the royal-blue stage visible behind the card.
         background:
-          "radial-gradient(ellipse at center, oklch(0.09 0.06 268 / 0.7) 0%, oklch(0.05 0.03 268 / 0.95) 70%)",
-        backdropFilter: "blur(18px)",
-        WebkitBackdropFilter: "blur(18px)",
+          "radial-gradient(ellipse at center, oklch(0.05 0.03 268 / 0) 0%, oklch(0.05 0.03 268 / 0.35) 60%, oklch(0.05 0.03 268 / 0.55) 100%)",
+        backdropFilter: "blur(6px) saturate(1.2)",
+        WebkitBackdropFilter: "blur(6px) saturate(1.2)",
       }}
       role="dialog"
       aria-modal="true"
