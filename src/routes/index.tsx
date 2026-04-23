@@ -1,11 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { StageFrame } from "@/components/StageFrame";
 import { AuraTile } from "@/components/AuraTile";
 import { SpotlightModal } from "@/components/SpotlightModal";
 import { AttractScreen } from "@/components/AttractScreen";
 import { ResetDialog } from "@/components/ResetDialog";
-import { MR_HASHTAGS, MS_HASHTAGS, shuffle } from "@/lib/hashtags";
+import { MR_HASHTAGS, shuffle } from "@/lib/hashtags";
+import { loadHashtags } from "@/lib/hashtag-store";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -31,10 +32,10 @@ type Category = "MR" | "MS";
 function Index() {
   const [showAttract, setShowAttract] = useState(true);
   const [category, setCategory] = useState<Category>("MR");
-  // Start with deterministic order on SSR; shuffle only on the client to avoid hydration mismatch.
+  // SSR-safe: start with deterministic order, then load saved + shuffle on client.
   const [hashtags, setHashtags] = useState<string[]>(MR_HASHTAGS);
   useEffect(() => {
-    setHashtags(shuffle(category === "MR" ? MR_HASHTAGS : MS_HASHTAGS));
+    setHashtags(shuffle(loadHashtags(category)));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const [flipped, setFlipped] = useState<Set<number>>(new Set());
