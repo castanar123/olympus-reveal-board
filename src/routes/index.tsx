@@ -73,7 +73,7 @@ function Index() {
 
   const handleReset = (cat: Category) => {
     setCategory(cat);
-    setHashtags(shuffle(cat === "MR" ? MR_HASHTAGS : MS_HASHTAGS));
+    setHashtags(shuffle(loadHashtags(cat)));
     setFlipped(new Set());
     setSpotlight(null);
     setShowReset(false);
