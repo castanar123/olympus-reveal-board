@@ -107,18 +107,17 @@ function Index() {
         </div>
       </header>
 
-      {/* Grid 5x4 */}
+      {/* Grid 5x4 — fills available stage space */}
       <main
         className="absolute inset-0 flex items-center justify-center"
-        style={{ padding: "5rem 3rem 3rem" }}
+        style={{ padding: "3.5rem 2rem 2rem" }}
       >
         <div
           className="grid w-full h-full"
           style={{
             gridTemplateColumns: "repeat(5, 1fr)",
             gridTemplateRows: "repeat(4, 1fr)",
-            gap: "clamp(0.5rem, 1vw, 1rem)",
-            maxWidth: "1500px",
+            gap: "clamp(0.4rem, 0.8vw, 0.85rem)",
           }}
         >
           {tiles.map((t) => (

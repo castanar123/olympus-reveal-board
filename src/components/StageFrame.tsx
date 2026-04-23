@@ -10,13 +10,13 @@ export function StageFrame({ children }: { children: ReactNode }) {
           src={bg}
           alt=""
           aria-hidden="true"
-          className="absolute inset-0 h-full w-full object-cover opacity-70"
+          className="absolute inset-0 h-full w-full object-cover"
         />
         <div
           className="absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse at center, transparent 0%, oklch(0.09 0.06 268 / 0.6) 70%, oklch(0.05 0.03 268 / 0.95) 100%)",
+              "radial-gradient(ellipse at center, transparent 0%, oklch(0.09 0.06 268 / 0.25) 75%, oklch(0.05 0.03 268 / 0.55) 100%)",
           }}
           aria-hidden="true"
         />
