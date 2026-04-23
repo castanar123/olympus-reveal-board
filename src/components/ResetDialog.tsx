@@ -5,7 +5,7 @@ const RESET_PASSCODE = "ccs2026";
 interface ResetDialogProps {
   open: boolean;
   onClose: () => void;
-  onConfirm: (category: "MR" | "MS") => void;
+  onConfirm: () => void;
 }
 
 export function ResetDialog({ open, onClose, onConfirm }: ResetDialogProps) {
@@ -14,11 +14,11 @@ export function ResetDialog({ open, onClose, onConfirm }: ResetDialogProps) {
 
   if (!open) return null;
 
-  const submit = (category: "MR" | "MS") => {
+  const submit = () => {
     if (code === RESET_PASSCODE) {
       setCode("");
       setError(false);
-      onConfirm(category);
+      onConfirm();
     } else {
       setError(true);
     }
@@ -37,7 +37,7 @@ export function ResetDialog({ open, onClose, onConfirm }: ResetDialogProps) {
         onClick={(e) => e.stopPropagation()}
         className="font-sans"
         style={{
-          width: "min(420px, 90%)",
+          width: "min(440px, 90%)",
           padding: "2rem",
           borderRadius: "1rem",
           background: "var(--gradient-tile)",
@@ -48,15 +48,20 @@ export function ResetDialog({ open, onClose, onConfirm }: ResetDialogProps) {
       >
         <h3
           className="font-display silver-text text-center"
-          style={{ fontSize: "1.75rem", fontWeight: 700, letterSpacing: "0.05em" }}
+          style={{ fontSize: "1.6rem", fontWeight: 700, letterSpacing: "0.05em" }}
         >
-          RESET BOARD
+          RESET & RESHUFFLE
         </h3>
         <p
           className="text-center mt-2"
-          style={{ color: "oklch(0.82 0.01 250 / 0.7)", fontSize: "0.8rem", letterSpacing: "0.2em" }}
+          style={{
+            color: "oklch(0.82 0.01 250 / 0.75)",
+            fontSize: "0.78rem",
+            letterSpacing: "0.12em",
+            lineHeight: 1.5,
+          }}
         >
-          OPERATOR ACCESS REQUIRED
+          This will clear all revealed tiles and deal a brand new shuffled board.
         </p>
 
         <input
@@ -66,7 +71,8 @@ export function ResetDialog({ open, onClose, onConfirm }: ResetDialogProps) {
             setCode(e.target.value);
             setError(false);
           }}
-          placeholder="Enter passcode"
+          onKeyDown={(e) => e.key === "Enter" && submit()}
+          placeholder="Enter operator passcode"
           autoFocus
           className="w-full mt-6 px-4 py-3 rounded-lg outline-none"
           style={{
@@ -84,38 +90,33 @@ export function ResetDialog({ open, onClose, onConfirm }: ResetDialogProps) {
 
         <div className="grid grid-cols-2 gap-3 mt-6">
           <button
-            onClick={() => submit("MR")}
-            className="py-3 rounded-lg font-display font-semibold transition-transform hover:scale-[1.03]"
+            onClick={onClose}
+            className="py-3 rounded-lg font-display"
             style={{
-              background: "var(--gradient-silver)",
-              color: "oklch(0.18 0.08 265)",
-              letterSpacing: "0.15em",
-              boxShadow: "0 4px 16px oklch(0 0 0 / 0.4)",
+              background: "transparent",
+              color: "oklch(0.82 0.01 250 / 0.85)",
+              letterSpacing: "0.2em",
+              fontWeight: 600,
+              border: "1px solid oklch(0.82 0.01 250 / 0.4)",
+              cursor: "pointer",
             }}
           >
-            LOAD MR.
+            CANCEL
           </button>
           <button
-            onClick={() => submit("MS")}
+            onClick={submit}
             className="py-3 rounded-lg font-display font-semibold transition-transform hover:scale-[1.03]"
             style={{
               background: "var(--gradient-silver)",
               color: "oklch(0.18 0.08 265)",
-              letterSpacing: "0.15em",
+              letterSpacing: "0.2em",
               boxShadow: "0 4px 16px oklch(0 0 0 / 0.4)",
+              cursor: "pointer",
             }}
           >
-            LOAD MS.
+            RESHUFFLE
           </button>
         </div>
-
-        <button
-          onClick={onClose}
-          className="w-full mt-4 py-2 text-xs"
-          style={{ color: "oklch(0.82 0.01 250 / 0.6)", letterSpacing: "0.3em" }}
-        >
-          CANCEL
-        </button>
       </div>
     </div>
   );
