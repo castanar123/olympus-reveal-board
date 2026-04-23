@@ -31,7 +31,12 @@ type Category = "MR" | "MS";
 function Index() {
   const [showAttract, setShowAttract] = useState(true);
   const [category, setCategory] = useState<Category>("MR");
-  const [hashtags, setHashtags] = useState<string[]>(() => shuffle(MR_HASHTAGS));
+  // Start with deterministic order on SSR; shuffle only on the client to avoid hydration mismatch.
+  const [hashtags, setHashtags] = useState<string[]>(MR_HASHTAGS);
+  useEffect(() => {
+    setHashtags(shuffle(category === "MR" ? MR_HASHTAGS : MS_HASHTAGS));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [flipped, setFlipped] = useState<Set<number>>(new Set());
   const [spotlight, setSpotlight] = useState<number | null>(null);
   const [showReset, setShowReset] = useState(false);
