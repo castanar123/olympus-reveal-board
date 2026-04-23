@@ -336,3 +336,9 @@
 .stage-inner {
   container-type: size;
 }
+
+/* Overscan/bezel safe-zone: keep all UI content inside ~4% inset of the stage,
+   so LED walls and projectors that crop the edges never clip text or borders. */
+.stage-safe {
+  inset: 4cqh 4cqw !important;
+}
