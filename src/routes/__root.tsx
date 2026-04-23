@@ -1,6 +1,7 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
+import faviconUrl from "../assets/favicon.svg";
 
 function NotFoundComponent() {
   return (
@@ -29,13 +30,14 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Olympus Reveal · Mr. & Ms. CCS 2026" },
-      { name: "description", content: "Digital Royalty hashtag reveal stage for Mr. & Ms. CCS 2026." },
+      { title: "✨ CCS Night · Hashtag Reveal Board" },
+      { name: "description", content: "CCS Night Hashtag Reveal Board — The official reveal system for Mr. & Ms. CCS 2026. ✨🌙" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "icon", type: "image/svg+xml", href: faviconUrl },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {

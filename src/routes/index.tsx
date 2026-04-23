@@ -16,16 +16,16 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Olympus Reveal · Mr. & Ms. CCS 2026" },
+      { title: "✨ CCS Night · Hashtag Reveal Board" },
       {
         name: "description",
         content:
-          "The official hashtag reveal system for Mr. & Ms. CCS 2026 — Digital Royalty Edition.",
+          "CCS Night Hashtag Reveal Board — The official reveal system for Mr. & Ms. CCS 2026.",
       },
-      { property: "og:title", content: "Olympus Reveal · Mr. & Ms. CCS 2026" },
+      { property: "og:title", content: "✨ CCS Night · Hashtag Reveal Board" },
       {
         property: "og:description",
-        content: "Live hashtag reveal stage for Mr. & Ms. CCS 2026.",
+        content: "Live hashtag reveal stage for CCS Night 2026. ✨🌙",
       },
     ],
   }),
