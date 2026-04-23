@@ -313,20 +313,26 @@
   display: grid;
   place-items: center;
   background: oklch(0.05 0.03 268);
+  overflow: hidden;
 }
 .stage-inner {
   position: relative;
   aspect-ratio: 16 / 9;
-  width: 100%;
-  max-width: 100vw;
+  width: 100vw;
+  height: calc(100vw * 9 / 16);
   max-height: 100vh;
-  height: auto;
   overflow: hidden;
   background: var(--gradient-bg);
 }
+/* Wider-than-16:9 viewports (most LED walls / projectors): pillarbox by height */
 @media (min-aspect-ratio: 16/9) {
   .stage-inner {
-    width: auto;
     height: 100vh;
+    width: calc(100vh * 16 / 9);
   }
+}
+
+/* Scale typography to the stage. 1cqw = 1% of stage width — perfect for LED walls. */
+.stage-inner {
+  container-type: size;
 }

@@ -8,7 +8,7 @@ export function AttractScreen({ onStart }: { onStart: () => void }) {
       role="button"
       aria-label="Tap to begin"
     >
-      <div className="logo-pulse" style={{ maxWidth: "min(55vh, 45vw)" }}>
+      <div className="logo-pulse" style={{ maxWidth: "min(55cqh, 45cqw)" }}>
         <img
           src={logo}
           alt="Mr. & Ms. CCS 2026"
@@ -25,7 +25,7 @@ export function AttractScreen({ onStart }: { onStart: () => void }) {
         <p
           className="font-display silver-text"
           style={{
-            fontSize: "clamp(0.7rem, 1.2vw, 1rem)",
+            fontSize: "clamp(0.7rem, 1cqw, 1.4rem)",
             letterSpacing: "0.6em",
             opacity: 0.85,
           }}

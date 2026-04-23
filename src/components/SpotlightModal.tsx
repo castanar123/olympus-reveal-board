@@ -34,7 +34,7 @@ export function SpotlightModal({ number, hashtag, onClose }: SpotlightModalProps
       <div
         className="spotlight-card pulse-glow relative flex flex-col items-center justify-center"
         style={{
-          width: "min(70vw, 70vh)",
+          width: "min(70cqw, 70cqh)",
           aspectRatio: "1 / 1",
           padding: "3rem",
           borderRadius: "1.5rem",
@@ -50,7 +50,7 @@ export function SpotlightModal({ number, hashtag, onClose }: SpotlightModalProps
           className="font-display"
           style={{
             color: "oklch(0.18 0.08 265)",
-            fontSize: "clamp(1.5rem, 3vw, 2.5rem)",
+            fontSize: "clamp(1.5rem, 2.4cqw, 3rem)",
             fontWeight: 600,
             letterSpacing: "0.3em",
             opacity: 0.55,
@@ -77,7 +77,7 @@ export function SpotlightModal({ number, hashtag, onClose }: SpotlightModalProps
             className="font-sans"
             style={{
               color: "oklch(0.1 0.04 268)",
-              fontSize: "clamp(2rem, 6.5vw, 6rem)",
+              fontSize: "clamp(2rem, 6cqw, 8rem)",
               fontWeight: 900,
               lineHeight: 1.05,
               letterSpacing: "-0.02em",

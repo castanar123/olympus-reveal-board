@@ -22,7 +22,7 @@ export function AuraTile({ number, hashtag, flipped, delay, onClick }: AuraTileP
           <span
             className="font-display silver-emboss leading-none"
             style={{
-              fontSize: "clamp(2.5rem, 6vw, 5.5rem)",
+              fontSize: "clamp(2.5rem, 5cqw, 8rem)",
               fontWeight: 700,
               letterSpacing: "-0.02em",
             }}
@@ -36,7 +36,7 @@ export function AuraTile({ number, hashtag, flipped, delay, onClick }: AuraTileP
             className="font-sans text-center leading-tight"
             style={{
               color: "oklch(0.12 0.04 268)",
-              fontSize: "clamp(0.7rem, 1.4vw, 1.25rem)",
+              fontSize: "clamp(0.7rem, 1.3cqw, 1.6rem)",
               fontWeight: 800,
               letterSpacing: "-0.01em",
               textShadow: "0 1px 0 oklch(1 0 0 / 0.3)",
