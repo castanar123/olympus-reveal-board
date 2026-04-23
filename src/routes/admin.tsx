@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { loadHashtags, saveHashtags, resetHashtags } from "@/lib/hashtag-store";
+import { loadPool, savePool, resetPool } from "@/lib/hashtag-store";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -13,18 +13,13 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
-type Category = "MR" | "MS";
-
 function AdminPage() {
-  const [category, setCategory] = useState<Category>("MR");
   const [list, setList] = useState<string[]>(Array(20).fill(""));
   const [saved, setSaved] = useState(false);
 
-  // Load when category changes
   useEffect(() => {
-    setList(loadHashtags(category));
-    setSaved(false);
-  }, [category]);
+    setList(loadPool());
+  }, []);
 
   const update = (idx: number, value: string) => {
     setList((prev) => {
@@ -43,7 +38,7 @@ function AdminPage() {
 
   const handleSave = () => {
     const cleaned = list.map(ensureHash);
-    saveHashtags(category, cleaned);
+    savePool(cleaned);
     setList(cleaned);
     setSaved(true);
     setTimeout(() => setSaved(false), 2400);
@@ -51,7 +46,7 @@ function AdminPage() {
 
   const handleReset = () => {
     if (!confirm("Reset to the default hashtag pool? Your custom edits will be lost.")) return;
-    setList(resetHashtags(category));
+    setList(resetPool());
     setSaved(false);
   };
 
@@ -65,7 +60,6 @@ function AdminPage() {
       }}
     >
       <div className="mx-auto" style={{ maxWidth: "1100px", padding: "3rem 1.5rem 5rem" }}>
-        {/* Header */}
         <div className="flex items-center justify-between mb-2">
           <Link
             to="/"
@@ -95,38 +89,10 @@ function AdminPage() {
           Hashtag Pool
         </h1>
         <p className="mt-2 font-sans" style={{ color: "oklch(0.82 0.01 250 / 0.7)" }}>
-          Edit up to 20 hashtags per category. Saved entries are stored on this device and used by
-          the stage on next load.
+          One shared pool of 20 hashtags used for all candidates. Saved entries persist on this
+          device. Click <strong>Reset & Reshuffle</strong> on the stage to deal a fresh board.
         </p>
 
-        {/* Category tabs */}
-        <div className="flex gap-2 mt-8">
-          {(["MR", "MS"] as const).map((c) => (
-            <button
-              key={c}
-              onClick={() => setCategory(c)}
-              className="font-display"
-              style={{
-                padding: "0.7rem 1.5rem",
-                borderRadius: "0.6rem",
-                letterSpacing: "0.2em",
-                fontWeight: 700,
-                background:
-                  category === c
-                    ? "var(--gradient-silver)"
-                    : "oklch(0.22 0.07 265 / 0.5)",
-                color:
-                  category === c ? "oklch(0.18 0.08 265)" : "oklch(0.82 0.01 250 / 0.8)",
-                border: "1px solid oklch(0.82 0.01 250 / 0.3)",
-                cursor: "pointer",
-              }}
-            >
-              {c === "MR" ? "MR. (GENTLEMEN)" : "MS. (LADIES)"}
-            </button>
-          ))}
-        </div>
-
-        {/* Grid of inputs */}
         <div
           className="grid gap-3 mt-8"
           style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
@@ -171,7 +137,6 @@ function AdminPage() {
           ))}
         </div>
 
-        {/* Actions */}
         <div className="flex flex-wrap items-center gap-3 mt-8">
           <button
             onClick={handleSave}
@@ -203,7 +168,7 @@ function AdminPage() {
               cursor: "pointer",
             }}
           >
-            RESET TO DEFAULT
+            RESET POOL TO DEFAULT
           </button>
           {saved && (
             <span
@@ -214,7 +179,7 @@ function AdminPage() {
                 letterSpacing: "0.15em",
               }}
             >
-              ✓ SAVED · RELOAD STAGE TO APPLY
+              ✓ SAVED · USE STAGE'S RESET TO RESHUFFLE
             </span>
           )}
         </div>
@@ -223,9 +188,9 @@ function AdminPage() {
           className="mt-10 font-sans text-xs"
           style={{ color: "oklch(0.82 0.01 250 / 0.5)", lineHeight: 1.6 }}
         >
-          Tip: hashtags are saved to this browser's local storage. Use the same machine for both
-          editing and showtime. The stage shuffles the list on every load, so order here doesn't
-          determine reveal order.
+          Note: editing the pool here does not change the current board. The stage keeps its
+          shuffled order and any revealed tiles even after a refresh — only the operator's Reset
+          action redeals the board.
         </p>
       </div>
     </div>
