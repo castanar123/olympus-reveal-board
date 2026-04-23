@@ -5,8 +5,13 @@ import { AuraTile } from "@/components/AuraTile";
 import { SpotlightModal } from "@/components/SpotlightModal";
 import { AttractScreen } from "@/components/AttractScreen";
 import { ResetDialog } from "@/components/ResetDialog";
-import { MR_HASHTAGS, shuffle } from "@/lib/hashtags";
-import { loadHashtags } from "@/lib/hashtag-store";
+import { DEFAULT_HASHTAGS } from "@/lib/hashtags";
+import {
+  loadOrCreateBoard,
+  loadFlipped,
+  saveFlipped,
+  resetBoard,
+} from "@/lib/hashtag-store";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -27,22 +32,23 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-type Category = "MR" | "MS";
-
 function Index() {
+  // Attract screen always shown on first mount (acts as accidental-click guard).
   const [showAttract, setShowAttract] = useState(true);
-  const [category, setCategory] = useState<Category>("MR");
-  // SSR-safe: start with deterministic order, then load saved + shuffle on client.
-  const [hashtags, setHashtags] = useState<string[]>(MR_HASHTAGS);
-  useEffect(() => {
-    setHashtags(shuffle(loadHashtags(category)));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
+  // SSR-safe defaults; real persisted board + flipped set are loaded on the client.
+  const [hashtags, setHashtags] = useState<string[]>(DEFAULT_HASHTAGS);
   const [flipped, setFlipped] = useState<Set<number>>(new Set());
   const [spotlight, setSpotlight] = useState<number | null>(null);
   const [showReset, setShowReset] = useState(false);
 
-  // Operator shortcuts: F11 fullscreen, R for reset
+  // Hydrate from localStorage on mount: persists across accidental refresh.
+  useEffect(() => {
+    setHashtags(loadOrCreateBoard());
+    setFlipped(new Set(loadFlipped()));
+  }, []);
+
+  // Operator shortcuts: F11 fullscreen, Ctrl+Shift+R for reset.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "F11") {
@@ -53,7 +59,6 @@ function Index() {
           document.exitFullscreen?.().catch(() => {});
         }
       }
-      // Hidden reset shortcut: Ctrl+Shift+R
       if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "r") {
         e.preventDefault();
         setShowReset(true);
@@ -64,16 +69,17 @@ function Index() {
   }, []);
 
   const handleFlip = (idx: number) => {
-    if (flipped.has(idx) || spotlight !== null) return;
+    if (flipped.has(idx) || spotlight !== null || showAttract) return;
     const next = new Set(flipped);
     next.add(idx);
     setFlipped(next);
+    saveFlipped(next);
     setSpotlight(idx);
   };
 
-  const handleReset = (cat: Category) => {
-    setCategory(cat);
-    setHashtags(shuffle(loadHashtags(cat)));
+  const handleReset = () => {
+    const { board } = resetBoard();
+    setHashtags(board);
     setFlipped(new Set());
     setSpotlight(null);
     setShowReset(false);
@@ -94,29 +100,38 @@ function Index() {
       {/* Safe-zone wrapper — keeps text & tile borders inside the visible area on
           LED walls / projectors that have bezel or 5% overscan. */}
       <div className="stage-safe absolute inset-0">
-        {/* Header */}
         <header
           className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between"
           style={{ padding: "1rem 1.5rem" }}
         >
-          <div className="font-display silver-text" style={{ fontSize: "0.7rem", letterSpacing: "0.5em" }}>
+          <div
+            className="font-display silver-text"
+            style={{ fontSize: "0.7rem", letterSpacing: "0.5em" }}
+          >
             OLYMPUS · REVEAL
           </div>
           <div
             className="font-display silver-emboss text-center"
-            style={{ fontSize: "clamp(1rem, 1.6cqw, 2rem)", fontWeight: 700, letterSpacing: "0.25em" }}
+            style={{
+              fontSize: "clamp(1rem, 1.6cqw, 2rem)",
+              fontWeight: 700,
+              letterSpacing: "0.25em",
+            }}
           >
-            MR. & MS. CCS · {category === "MR" ? "GENTLEMEN" : "LADIES"}
+            MR. & MS. CCS · HASHTAG REVEAL
           </div>
           <div
             className="font-sans"
-            style={{ fontSize: "0.65rem", letterSpacing: "0.3em", color: "oklch(0.82 0.01 250 / 0.6)" }}
+            style={{
+              fontSize: "0.65rem",
+              letterSpacing: "0.3em",
+              color: "oklch(0.82 0.01 250 / 0.6)",
+            }}
           >
             {flipped.size}/20 REVEALED
           </div>
         </header>
 
-        {/* Grid 5x4 — fills available stage space */}
         <main
           className="absolute inset-0 flex items-center justify-center"
           style={{ padding: "3.25rem 1rem 2.25rem" }}
@@ -131,7 +146,7 @@ function Index() {
           >
             {tiles.map((t) => (
               <AuraTile
-                key={`${category}-${t.idx}`}
+                key={t.idx}
                 number={t.number}
                 hashtag={t.hashtag}
                 flipped={flipped.has(t.idx)}
@@ -142,20 +157,27 @@ function Index() {
           </div>
         </main>
 
-        {/* Footer hint */}
         <footer
           className="absolute bottom-0 left-0 right-0 z-10 flex items-center justify-between"
           style={{ padding: "0.5rem 1.5rem", gap: "1rem" }}
         >
           <span
             className="font-sans"
-            style={{ fontSize: "0.6rem", letterSpacing: "0.3em", color: "oklch(0.82 0.01 250 / 0.45)" }}
+            style={{
+              fontSize: "0.6rem",
+              letterSpacing: "0.3em",
+              color: "oklch(0.82 0.01 250 / 0.45)",
+            }}
           >
             F11 · FULLSCREEN
           </span>
           <span
             className="font-sans"
-            style={{ fontSize: "0.6rem", letterSpacing: "0.3em", color: "oklch(0.82 0.01 250 / 0.45)" }}
+            style={{
+              fontSize: "0.6rem",
+              letterSpacing: "0.3em",
+              color: "oklch(0.82 0.01 250 / 0.45)",
+            }}
           >
             ESC / SPACE · CLOSE SPOTLIGHT
           </span>
@@ -182,6 +204,7 @@ function Index() {
                 letterSpacing: "0.3em",
                 color: "oklch(0.82 0.01 250 / 0.45)",
                 padding: "0.25rem 0.5rem",
+                cursor: "pointer",
               }}
             >
               ⌃⇧R · RESET
@@ -190,7 +213,6 @@ function Index() {
         </footer>
       </div>
 
-      {/* Spotlight */}
       {spotlight !== null && (
         <SpotlightModal
           number={spotlight + 1}
@@ -199,14 +221,12 @@ function Index() {
         />
       )}
 
-      {/* Reset dialog */}
       <ResetDialog
         open={showReset}
         onClose={() => setShowReset(false)}
         onConfirm={handleReset}
       />
 
-      {/* Attract intro overlay */}
       {showAttract && <AttractScreen onStart={() => setShowAttract(false)} />}
     </StageFrame>
   );
